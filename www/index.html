@@ -5,17 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
     <script src="components/loader.js"></script>
+      
     <link rel="stylesheet" href="css/style.css">
+    
+     <script src="lib/ajax.js"> </script>
+	<script type="text/javascript">
+	
+	 	function windowTemp(pagina, caso, dd1, dd2, dd3, orig,ext,dd4) {
+		
+		var xmlhttp = createRequest();
+		var obj = document.getElementById("divBody");
+			
+		switch (caso) 
+		{
+			case'cadastrarCliente':
+				obj = document.getElementById("divBody");	
+				break;
+		}
+        var dados = "caso=" + escape(caso)+'&dd1='+ escape(dd1)+'&dd2='+ escape(dd2)+'&dd3='+ escape(dd3)+"&dado1="+escape(dd1)+"&dado2="+escape(dd2)+"&dado3="+escape(dd3)
+		+'&orig='+ escape(orig)+'&dd4='+ escape(dd4)+'&retorno='+ escape(ext)+'&origem='+ escape(orig);	
+		if(orig =='novaOrdCarga') dados= dados+'&motorista='+ext;
+	
+		xmlhttp.open("POST", pagina, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");	
+		xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+		
+		switch(orig){
+
+		case'atualizar':
+			location.reload();
+			break;
+
+			
+			default:
+				obj.innerHTML = xmlhttp.responseText;
+				break;
+				}
+					
+				}
+	
+	
+			}	
+		xmlhttp.send(dados);
+	}
+	</script>
     <script>
+      function cadastrarCliente(dd1, dd2, dd3)
+      {
+        windowTemp('https://prj-crud-backendishappy.c9users.io/prjCrud/data.php','cadastrarCliente',dd1, dd2, dd3);
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('cpf').value = '';
+        alert('Cadastrado com sucesso!');
+      }
+      function transformCPF(val)
+      {
+        switch(val.length)
+        {
+          case 3:
+            val = val + '.';
+            break;
+          case 7:
+            val = val + '.';
+            break;
+          case 11:
+            val = val + '-';
+            break;
+        }
+        document.getElementById('cpf').value = val;
+      }
     </script>
 </head>
 <body>
 	<div id='divBody'>
     <form>
-      <input type="text" value="" placeholder="Nome" name="name"/>
-      <input type="text" value="" placeholder="E-mail" name="email"/>
-      <input type="text" value="" placeholder="CPF" name="cpf"/>
-      <input type="submit" value="Cadastrar" />
+      <input type="text" value="" placeholder="Nome" id="name"/>
+      <input type="text" value="" placeholder="E-mail" id="email"/>
+      <input type="text" value="" placeholder="CPF" maxlength="14" onkeypress="transformCPF(this.value)" id="cpf"/>
+      <input type="button" value="Cadastrar" onclick="cadastrarCliente(document.getElementById('name').value, document.getElementById('email').value,document.getElementById('cpf').value)"/>
     </form>
 	</div>
 </body>
